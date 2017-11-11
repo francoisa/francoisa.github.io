@@ -4,5 +4,58 @@
     </head>
     <body>
         <h1>Notes from Andre Francois</h1>
+        <h2>Reducing the Windows Partition</h2>
+
+        <p>The first thing that we need to do is reduce the size of the existing Windows 7 partition. While you can use third-party 
+    applications like GParted, I found Windows 7’s own Disk Management tool to be the most efficient method for accomplishing this task. 
+    The Disk Management tool can be accessed by using Win+r and entering the command diskmgmt.msc.</p>
+        
+        <p>Right-click on the Windows 7 volume (C:) and selected “Shrink Volume.” Then enter the amount of space (in Megabytes) 
+            that the partition should shrink (which in turn becomes the amount of space available to install our Linux distribution), 
+            which in our example is 48000 Megabytes (48 Gigabytes), then select “Shrink” (See Figure 1). 
+            When complete, exit out of the Disk Management tool and reboot the system.
+        </p>
+        
+        <h2>Configure Windows for Dual Boot</h2>
+        <pre>dd if=/dev/sda3 of=/mnt/share/ubuntu.bin bs=512 count=1</pre>
+        
+        <p>Exit out of the Ubuntu live system and reboot to Windows 7. Along the way, you may see Windows perform a disk check 
+            (don’t worry, that’s normal, and should only occur once as a result of these procedures). Log into Windows 7 and 
+            open the FAT32 volume you created and you should see the ubuntu.bin file. Copy that file to the root of the Windows 7 
+            volume (e.g., C:).</p>
+
+        <h2>use BCDEdit to add an entry to Windows Boot Manager</h2>
+        
+        <p></p>
+        Administrative privileges are required to use BCDEdit, so use Win+r, type cmd, and then press CTRL+SHIFT+ENTER. Let’s start by creating an entry for our Linux distribution. Note here that you are free to choose another entry name if desired:
+
+        <pre>bcdedit /create /d “Ubuntu” /application bootsector</pre>
+
+        <p>BCDEdit will return an alphanumeric identifier for this entry that I will refer to as {ID} in the remaining steps. 
+            You’ll need to replace {ID} by the actual returned identifier. An example of {ID} is 
+            {d7294d4e-9837-11de-99ac-f3f3a79e3e93}. Next, let’s specify which partition hosts a copy of the linux.bin file:</p>
+
+
+        <pre>bcdedit /set {ID} device partition=c:</pre>
+
+        <p>The path to our ubuntu.bin file: </p>
+
+        <pre>bcdedit /set {ID}  path \ubuntu.bin</pre>
+
+        <p>An entry to the displayed menu at boot time:</p>
+
+        <pre>bcdedit /displayorder {ID} /addlast</pre>
+
+        <p>and finally, let’s specify how long the menu choices will be displayed:</p>
+
+        <pre>bcdedit /timeout 30</pre>
+
+        <p>That’s it! Now reboot and you will be presented with menu where you can choose to boot to Windows 7 or Ubuntu. 
+            When you choose Ubuntu, you’ll be taken to the it bootloader menu where you can choose to continue booting Ubuntu.</p>
+
+        <p>On a final note, if at any time you want to eliminate the Ubuntu menu option simply delete the BCD store entry 
+            you created using the following command:</p>
+
+        <pre>bcdedit /delete {ID}</pre>
     </body>
 </html>
