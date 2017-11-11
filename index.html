@@ -24,10 +24,11 @@
             open the FAT32 volume you created and you should see the ubuntu.bin file. Copy that file to the root of the Windows 7 
             volume (e.g., C:).</p>
 
-        <h2>use BCDEdit to add an entry to Windows Boot Manager</h2>
+        <h2>Use BCDEdit to add an entry to Windows Boot Manager</h2>
         
-        <p></p>
-        Administrative privileges are required to use BCDEdit, so use Win+r, type cmd, and then press CTRL+SHIFT+ENTER. Let’s start by creating an entry for our Linux distribution. Note here that you are free to choose another entry name if desired:
+        <p>Administrative privileges are required to use BCDEdit, so use Win+r, type cmd, and then press CTRL+SHIFT+ENTER. 
+            Let’s start by creating an entry for our Linux distribution. Note here that you are free to choose another 
+            entry name if desired:</p>
 
         <pre>bcdedit /create /d “Ubuntu” /application bootsector</pre>
 
